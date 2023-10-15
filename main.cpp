@@ -103,6 +103,8 @@ struct Car
         void flow();
 
         float buyGas(float);
+
+        void printFuelDetails();
     };
 
     std::string carColor;
@@ -115,7 +117,7 @@ struct Car
     void drive();
     void putFuelInCar(Fuel fule);
     float consumeFuel(); // return the fuel consumed in gallon
-
+    void printCarDetails();
 };
 
 Car::Car() : carColor{"green"}
@@ -154,6 +156,16 @@ float Car::consumeFuel()
     return 5.0f;  // replace with actual implementation
 }
 
+void Car::printCarDetails()
+{
+    std::cout << "Car details: \n"
+          << "Color: " << this->carColor << "\n"
+          << "Horse Power: " << this->horsePower << "\n"
+          << "Cost: " << this->cost << " $\n"
+          << "Brand: " << this->brand << "\n"
+          << "Year: " << this->year << "\n";
+}
+
 Car::Fuel::Fuel() : octaneRating{98}
 {
     std::cout << "Fuel being constructed" << std::endl;
@@ -189,6 +201,16 @@ float Car::Fuel::buyGas(float gallons)
     return costPerGallon * gallons;
 }
 
+void Car::Fuel::printFuelDetails()
+{
+    std::cout << "Fuel details: \n"
+          << "Octane Rating: " << this->octaneRating << "\n"
+          << "Cost Per Gallon: " << this->costPerGallon << " $/gallon\n"
+          << "Country of Origin: " << this->CountryOfOrigin << "\n"
+          << "Distributer: " << this->distributer << "\n"
+          << "Color: " << this->color << "\n";
+}
+
 /*
  copied UDT 2:
  */
@@ -212,6 +234,7 @@ struct CellPhone
         void wrapPhone();
         void providePadding();
         void preventScratches();
+        void printCaseDetails();
     };
 
     std::string color;
@@ -225,6 +248,8 @@ struct CellPhone
     void playMusic();
 
     void changePhoneCase(Case phoneCase);
+
+    void printCellPhoneDetails();
 };
 
 CellPhone::CellPhone() : color{"red"}
@@ -267,6 +292,16 @@ void CellPhone::changePhoneCase(CellPhone::Case newPhoneCase)
     std::cout << "Changing phone case to " << newPhoneCase.brand << "...\n";
 }
 
+void CellPhone::printCellPhoneDetails()
+{
+    std::cout << "CellPhone details: \n"
+          << "Color: " << this->color << "\n"
+          << "Data Provider: " << this->dataProvider << "\n"
+          << "Brand: " << this->brand << "\n"
+          << "Processor: " << this->processor << "\n"
+          << "RAM Amount: " << this->ramAmount << " GB\n";
+}
+
 CellPhone::Case::Case()
 {
     std::cout << "Case being constructed" << std::endl;
@@ -298,6 +333,16 @@ void CellPhone::Case::preventScratches()
     }
 }
 
+void CellPhone::Case::printCaseDetails()
+{
+    std::cout << "Phone Case details: \n"
+          << "Color: " << this->color << "\n"
+          << "Brand: " << this->brand << "\n"
+          << "Cost: " << this->cost << " $\n"
+          << "Features: " << this->features << "\n"
+          << "Is Padded? " << (this->isPadded ? "Yes" : "No") << "\n";
+}
+
 /*
  copied UDT 3:
  */
@@ -318,6 +363,8 @@ struct Screen
     void adjustRefreshRate();
 
     int setPixels(int, int);
+
+    void printScreenDetails();
 };
 
 Screen::Screen() : brand{"Dell"}
@@ -353,6 +400,15 @@ int Screen::setPixels(int numPixels, int alpha)
         std::cout << i << " pixels set to alpha level " << alpha << std::endl;
     }
     return numPixels;
+}
+
+void Screen::printScreenDetails()
+{
+    std::cout << "Screen details: \n"
+          << "Brand: " << this->brand << "\n"
+          << "Refresh Rate: " << this->refreshRate << " Hz\n"
+          << "Resolution: " << this->pixelsX << "x" << this->pixelsY << "\n"
+          << "Connectors: " << this->connectors << "\n";
 }
 
 /*
@@ -462,6 +518,8 @@ int main()
               << "Distributer: " << fuel.distributer << "\n"
               << "Color: " << fuel.color << "\n";
 
+    fuel.printFuelDetails();
+
 
     //Car
     Car car;
@@ -478,6 +536,8 @@ int main()
               << "Brand: " << car.brand << "\n"
               << "Year: " << car.year << "\n";
 
+    car.printCarDetails();
+
     //Case
     CellPhone::Case phoneCase;
 
@@ -491,6 +551,8 @@ int main()
               << "Cost: " << phoneCase.cost << " $\n"
               << "Features: " << phoneCase.features << "\n"
               << "Is Padded? " << (phoneCase.isPadded ? "Yes" : "No") << "\n";
+
+    phoneCase.printCaseDetails();
 
     //CellPhone
     CellPhone cellPhone;
@@ -506,6 +568,8 @@ int main()
               << "Brand: " << cellPhone.brand << "\n"
               << "Processor: " << cellPhone.processor << "\n"
               << "RAM Amount: " << cellPhone.ramAmount << " GB\n";
+
+    cellPhone.printCellPhoneDetails();
 
     //Screen
     Screen screen;
@@ -524,6 +588,7 @@ int main()
               << "Resolution: " << screen.pixelsX << "x" << screen.pixelsY << "\n"
               << "Connectors: " << screen.connectors << "\n";
 
+    screen.printScreenDetails();
 
     Person person1;
     Person person2;
