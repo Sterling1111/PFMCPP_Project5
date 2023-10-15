@@ -350,6 +350,11 @@ int Screen::setPixels(int numPixels, int alpha)
     return numPixels;
 }
 
+/*
+ new UDT 4:
+ with 2 member functions
+ */
+
 struct Person
 {
     Person();
@@ -381,11 +386,6 @@ void Person::placeCall(Person friend2)
 {
     std::cout << "Placing call with " << friend2.car.brand << std::endl;
 }
-
-/*
- new UDT 4:
- with 2 member functions
- */
 
 /*
  new UDT 5:
