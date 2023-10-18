@@ -77,10 +77,8 @@ void Axe::aConstMemberFunction() const { }
  */
 
 
-
-
-
 #include <iostream>
+#include "LeakedObjectDetector.h"
 
 /*
  copied UDT 1:
@@ -102,13 +100,15 @@ struct Car
         std::string distributer{"Shell"};
         std::string color{"clear"};
 
-        void burn();
-        void smell();
-        void flow();
+        void burn() const;
+        void smell() const;
+        void flow() const;
 
-        float buyGas(float);
+        float buyGas(float) const;
 
-        void printFuelDetails();
+        void printFuelDetails() const;
+
+        JUCE_LEAK_DETECTOR(Fuel)
     };
 
     std::string carColor;
@@ -117,11 +117,13 @@ struct Car
     std::string brand{"Honda"};
     int year{1997};
 
-    void playMusic();
-    void drive();
-    void putFuelInCar(Fuel fule);
-    float consumeFuel(); // return the fuel consumed in gallon
-    void printCarDetails();
+    void playMusic() const;
+    void drive() const;
+    void putFuelInCar(const Fuel& fule) const;
+    float consumeFuel() const; // return the fuel consumed in gallon
+    void printCarDetails() const;
+
+    JUCE_LEAK_DETECTOR(Car)
 };
 
 Car::Car() : carColor{"green"}
@@ -134,23 +136,23 @@ Car::~Car()
     std::cout << "Car being destructed" << std::endl;
 }
 
-void Car::playMusic()
+void Car::playMusic() const
 {
     std::cout << "Playing music...\n";
 }
 
-void Car::drive()
+void Car::drive() const
 {
     std::cout << carColor << std::endl;
     std::cout << "Driving...\n";
 }
 
-void Car::putFuelInCar(Car::Fuel fuel)
+void Car::putFuelInCar(const Car::Fuel& fuel) const
 {
     std::cout << "Putting fuel in car from " << fuel.distributer << "...\n";
 }
 
-float Car::consumeFuel()
+float Car::consumeFuel() const
 {
     for(int i = 0; i < 5; ++i)
     {
@@ -160,7 +162,7 @@ float Car::consumeFuel()
     return 5.0f;  // replace with actual implementation
 }
 
-void Car::printCarDetails()
+void Car::printCarDetails() const
 {
     std::cout << "Car details: \n"
           << "Color: " << this->carColor << "\n"
@@ -180,23 +182,23 @@ Car::Fuel::~Fuel()
     std::cout << "Fuel being destructed" << std::endl;
 }
 
-void Car::Fuel::burn()
+void Car::Fuel::burn() const
 {
     std::cout << octaneRating << std::endl;
     std::cout << "Burning fuel...\n";
 }
 
-void Car::Fuel::smell()
+void Car::Fuel::smell() const
 {
     std::cout << "Smelling fuel...\n";
 }
 
-void Car::Fuel::flow()
+void Car::Fuel::flow() const
 {
     std::cout << "Fuel is flowing...\n";
 }
 
-float Car::Fuel::buyGas(float gallons)
+float Car::Fuel::buyGas(float gallons) const
 {
     for(float i = 1; i <= gallons; i++)
     {
@@ -205,7 +207,7 @@ float Car::Fuel::buyGas(float gallons)
     return costPerGallon * gallons;
 }
 
-void Car::Fuel::printFuelDetails()
+void Car::Fuel::printFuelDetails() const
 {
     std::cout << "Fuel details: \n"
           << "Octane Rating: " << this->octaneRating << "\n"
@@ -214,6 +216,18 @@ void Car::Fuel::printFuelDetails()
           << "Distributer: " << this->distributer << "\n"
           << "Color: " << this->color << "\n";
 }
+
+struct CarWrapper
+{
+    Car* carPtr{nullptr};
+
+    CarWrapper(Car* ptr) : carPtr{ptr} {}
+    ~CarWrapper()
+    {
+        delete carPtr;
+    }
+    JUCE_LEAK_DETECTOR(CarWrapper)
+};
 
 /*
  copied UDT 2:
@@ -235,10 +249,12 @@ struct CellPhone
         std::string features{"kickstand"};
         bool isPadded{true};
 
-        void wrapPhone();
-        void providePadding();
-        void preventScratches();
-        void printCaseDetails();
+        void wrapPhone() const;
+        void providePadding() const;
+        void preventScratches() const;
+        void printCaseDetails() const;
+
+        JUCE_LEAK_DETECTOR(Case)
     };
 
     std::string color;
@@ -247,13 +263,15 @@ struct CellPhone
     std::string processor{"Qualcomm 865"};
     int ramAmount{12};
 
-    void makeCall();
-    void browseWeb();
-    void playMusic();
+    void makeCall() const;
+    void browseWeb() const;
+    void playMusic() const;
 
-    void changePhoneCase(Case phoneCase);
+    void changePhoneCase(const Case& phoneCase) const;
 
-    void printCellPhoneDetails();
+    void printCellPhoneDetails() const;
+
+    JUCE_LEAK_DETECTOR(CellPhone)
 };
 
 CellPhone::CellPhone() : color{"red"}
@@ -266,7 +284,7 @@ CellPhone::~CellPhone()
     std::cout << "CellPhone being destructed" << std::endl;
 }
 
-void CellPhone::makeCall()
+void CellPhone::makeCall() const
 {
     std::cout << color << std::endl;
     std::cout << "Making call...\n";
@@ -281,22 +299,22 @@ void CellPhone::makeCall()
     std::cout << "call ended" << std::endl;
 }
 
-void CellPhone::browseWeb()
+void CellPhone::browseWeb() const
 {
     std::cout << "Browsing web...\n";
 }
 
-void CellPhone::playMusic()
+void CellPhone::playMusic() const
 {
     std::cout << "Playing music...\n";
 }
 
-void CellPhone::changePhoneCase(CellPhone::Case newPhoneCase)
+void CellPhone::changePhoneCase(const CellPhone::Case& newPhoneCase) const
 {
     std::cout << "Changing phone case to " << newPhoneCase.brand << "...\n";
 }
 
-void CellPhone::printCellPhoneDetails()
+void CellPhone::printCellPhoneDetails() const
 {
     std::cout << "CellPhone details: \n"
           << "Color: " << this->color << "\n"
@@ -306,7 +324,7 @@ void CellPhone::printCellPhoneDetails()
           << "RAM Amount: " << this->ramAmount << " GB\n";
 }
 
-CellPhone::Case::Case()
+CellPhone::Case::Case() 
 {
     std::cout << "Case being constructed" << std::endl;
 }
@@ -316,18 +334,18 @@ CellPhone::Case::~Case()
     std::cout << "Case being destructed" << std::endl;
 }
 
-void CellPhone::Case::wrapPhone()
+void CellPhone::Case::wrapPhone() const
 {
     std::cout << color << std::endl;
     std::cout << "Wrapping phone...\n";
 }
 
-void CellPhone::Case::providePadding()
+void CellPhone::Case::providePadding() const
 {
     std::cout << "Providing padding...\n";
 }
 
-void CellPhone::Case::preventScratches()
+void CellPhone::Case::preventScratches() const
 {
     std::cout << "Preventing scratches...\n";
 
@@ -337,7 +355,7 @@ void CellPhone::Case::preventScratches()
     }
 }
 
-void CellPhone::Case::printCaseDetails()
+void CellPhone::Case::printCaseDetails() const
 {
     std::cout << "Phone Case details: \n"
           << "Color: " << this->color << "\n"
@@ -346,6 +364,18 @@ void CellPhone::Case::printCaseDetails()
           << "Features: " << this->features << "\n"
           << "Is Padded? " << (this->isPadded ? "Yes" : "No") << "\n";
 }
+
+struct CellPhoneWrapper
+{
+    CellPhone* cellPhonePtr{nullptr};
+
+    CellPhoneWrapper(CellPhone* ptr) : cellPhonePtr{ptr} {}
+    ~CellPhoneWrapper()
+    {
+        delete cellPhonePtr;
+    }
+    JUCE_LEAK_DETECTOR(CellPhoneWrapper)
+};
 
 /*
  copied UDT 3:
@@ -362,13 +392,15 @@ struct Screen
     int pixelsY{560};
     std::string connectors{"HDMI"};
 
-    void displayImages();
-    void adjustColorSettings();
-    void adjustRefreshRate();
+    void displayImages() const;
+    void adjustColorSettings() const;
+    void adjustRefreshRate() const;
 
-    int setPixels(int, int);
+    int setPixels(int, int) const;
 
-    void printScreenDetails();
+    void printScreenDetails() const;
+
+    JUCE_LEAK_DETECTOR(Screen)
 };
 
 Screen::Screen() : brand{"Dell"}
@@ -381,23 +413,23 @@ Screen::~Screen()
     std::cout << "Screen being destructed" << std::endl;
 }
 
-void Screen::displayImages()
+void Screen::displayImages() const
 {
     std::cout << brand << std::endl;
     std::cout << "Displaying images...\n";
 }
 
-void Screen::adjustColorSettings()
+void Screen::adjustColorSettings() const
 {
     std::cout << "Adjusting color settings...\n";
 }
 
-void Screen::adjustRefreshRate()
+void Screen::adjustRefreshRate() const
 {
     std::cout << "Adjusting refresh rate...\n";
 }
 
-int Screen::setPixels(int numPixels, int alpha)
+int Screen::setPixels(int numPixels, int alpha) const
 {
     for(int i = 1; i <= numPixels; ++i)
     {
@@ -406,7 +438,7 @@ int Screen::setPixels(int numPixels, int alpha)
     return numPixels;
 }
 
-void Screen::printScreenDetails()
+void Screen::printScreenDetails() const
 {
     std::cout << "Screen details: \n"
           << "Brand: " << this->brand << "\n"
@@ -414,6 +446,18 @@ void Screen::printScreenDetails()
           << "Resolution: " << this->pixelsX << "x" << this->pixelsY << "\n"
           << "Connectors: " << this->connectors << "\n";
 }
+
+struct ScreenWrapper
+{
+    Screen* screenPtr{nullptr};
+
+    ScreenWrapper(Screen* ptr) : screenPtr{ptr} {}
+    ~ScreenWrapper()
+    {
+        delete screenPtr;
+    }
+    JUCE_LEAK_DETECTOR(ScreenWrapper)
+};
 
 /*
  new UDT 4:
@@ -428,8 +472,10 @@ struct Person
     Car car;
     CellPhone phone;
 
-    void driveCar(std::string, std::string);
-    void placeCall(Person);
+    void driveCar(std::string, std::string) const;
+    void placeCall(const Person&) const;
+
+    JUCE_LEAK_DETECTOR(Person)
 };
 
 Person::Person() 
@@ -442,15 +488,28 @@ Person::~Person()
     std::cout << "Person being destructed" << std::endl;
 }
 
-void Person::driveCar(std::string start, std::string destination)
+void Person::driveCar(std::string start, std::string destination) const
 {
     std::cout << "Driving from " << start << " to " << destination << std::endl;
 }
 
-void Person::placeCall(Person friend2)
+void Person::placeCall(const Person& friend2) const
 {
     std::cout << "Placing call with " << friend2.car.brand << std::endl;
 }
+
+struct PersonWrapper
+{
+    Person* personPtr{nullptr};
+
+    PersonWrapper(Person* ptr) : personPtr{ptr} {}
+    ~PersonWrapper()
+    {
+        delete personPtr;
+    }
+
+    JUCE_LEAK_DETECTOR(PersonWrapper)
+};
 
 /*
  new UDT 5:
@@ -464,8 +523,10 @@ struct Monitor
 
     Screen screen;
 
-    void powerOn();
-    void adjustBrightness();
+    void powerOn() const;
+    void adjustBrightness() const;
+
+    JUCE_LEAK_DETECTOR(Monitor)
 };
 
 Monitor::Monitor()
@@ -478,15 +539,28 @@ Monitor::~Monitor()
     std::cout << "Monitor being destructed" << std::endl;
 }
 
-void Monitor::powerOn()
+void Monitor::powerOn() const
 {
     std::cout << "Turning on the monitor" << std::endl;
 }
 
-void Monitor::adjustBrightness()
+void Monitor::adjustBrightness() const
 {
     std::cout << "Adjusting brightness" << std::endl;
 }
+
+struct MonitorWrapper
+{
+    Monitor* monitorPtr{nullptr};
+
+    MonitorWrapper(Monitor* ptr) : monitorPtr{ptr} {}
+    ~MonitorWrapper()
+    {
+        delete monitorPtr;
+    }
+
+    JUCE_LEAK_DETECTOR(MonitorWrapper)
+};
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
@@ -504,7 +578,6 @@ void Monitor::adjustBrightness()
 
 int main()
 {
-    //Fuel
     Car::Fuel fuel;
 
     fuel.burn();
@@ -526,21 +599,21 @@ int main()
 
 
     //Car
-    Car car;
+    CarWrapper car(new Car());
 
-    car.playMusic();
-    car.drive();
-    car.putFuelInCar(fuel);
-    car.consumeFuel();
+    car.carPtr->playMusic();
+    car.carPtr->drive();
+    car.carPtr->putFuelInCar(fuel);
+    car.carPtr->consumeFuel();
 
     std::cout << "Car details: \n"
-              << "Color: " << car.carColor << "\n"
-              << "Horse Power: " << car.horsePower << "\n"
-              << "Cost: " << car.cost << " $\n"
-              << "Brand: " << car.brand << "\n"
-              << "Year: " << car.year << "\n";
+              << "Color: " << car.carPtr->carColor << "\n"
+              << "Horse Power: " << car.carPtr->horsePower << "\n"
+              << "Cost: " << car.carPtr->cost << " $\n"
+              << "Brand: " << car.carPtr->brand << "\n"
+              << "Year: " << car.carPtr->year << "\n";
 
-    car.printCarDetails();
+    car.carPtr->printCarDetails();
 
     //Case
     CellPhone::Case phoneCase;
@@ -559,51 +632,51 @@ int main()
     phoneCase.printCaseDetails();
 
     //CellPhone
-    CellPhone cellPhone;
+    CellPhoneWrapper cellPhone(new CellPhone());
 
-    cellPhone.makeCall();
-    cellPhone.browseWeb();
-    cellPhone.playMusic();
-    cellPhone.changePhoneCase(phoneCase);
+    cellPhone.cellPhonePtr->makeCall();
+    cellPhone.cellPhonePtr->browseWeb();
+    cellPhone.cellPhonePtr->playMusic();
+    cellPhone.cellPhonePtr->changePhoneCase(phoneCase);
 
     std::cout << "CellPhone details: \n"
-              << "Color: " << cellPhone.color << "\n"
-              << "Data Provider: " << cellPhone.dataProvider << "\n"
-              << "Brand: " << cellPhone.brand << "\n"
-              << "Processor: " << cellPhone.processor << "\n"
-              << "RAM Amount: " << cellPhone.ramAmount << " GB\n";
+              << "Color: " << cellPhone.cellPhonePtr->color << "\n"
+              << "Data Provider: " << cellPhone.cellPhonePtr->dataProvider << "\n"
+              << "Brand: " << cellPhone.cellPhonePtr->brand << "\n"
+              << "Processor: " << cellPhone.cellPhonePtr->processor << "\n"
+              << "RAM Amount: " << cellPhone.cellPhonePtr->ramAmount << " GB\n";
 
-    cellPhone.printCellPhoneDetails();
+    cellPhone.cellPhonePtr->printCellPhoneDetails();
 
     //Screen
-    Screen screen;
+    ScreenWrapper screen(new Screen());
 
-    screen.displayImages();
-    screen.adjustColorSettings();
-    screen.adjustRefreshRate();
+    screen.screenPtr->displayImages();
+    screen.screenPtr->adjustColorSettings();
+    screen.screenPtr->adjustRefreshRate();
 
-    int numPixels = screen.setPixels(1, 2);
+    int numPixels = screen.screenPtr->setPixels(1, 2);
 
     std::cout << numPixels << " changed" << std::endl;
 
     std::cout << "Screen details: \n"
-              << "Brand: " << screen.brand << "\n"
-              << "Refresh Rate: " << screen.refreshRate << " Hz\n"
-              << "Resolution: " << screen.pixelsX << "x" << screen.pixelsY << "\n"
-              << "Connectors: " << screen.connectors << "\n";
+              << "Brand: " << screen.screenPtr->brand << "\n"
+              << "Refresh Rate: " << screen.screenPtr->refreshRate << " Hz\n"
+              << "Resolution: " << screen.screenPtr->pixelsX << "x" << screen.screenPtr->pixelsY << "\n"
+              << "Connectors: " << screen.screenPtr->connectors << "\n";
 
-    screen.printScreenDetails();
+    screen.screenPtr->printScreenDetails();
 
-    Person person1;
-    Person person2;
+    PersonWrapper person1(new Person());
+    PersonWrapper person2(new Person());
 
-    person1.driveCar("home", "friends house");
-    person1.placeCall(person2);
+    person1.personPtr->driveCar("home", "friends house");
+    person1.personPtr->placeCall(*(person2.personPtr));
 
-    Monitor monitor;
+    MonitorWrapper monitor(new Monitor());
 
-    monitor.powerOn();
-    monitor.adjustBrightness();
+    monitor.monitorPtr->powerOn();
+    monitor.monitorPtr->adjustBrightness();
 
     std::cout << "good to go!" << std::endl;
 }
