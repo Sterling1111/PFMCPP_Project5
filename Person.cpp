@@ -19,16 +19,3 @@ void Person::placeCall(const Person& friend2) const
 {
     std::cout << "Placing call with " << friend2.car.brand << std::endl;
 }
-
-struct PersonWrapper
-{
-    Person* personPtr{nullptr};
-
-    PersonWrapper(Person* ptr) : personPtr{ptr} {}
-    ~PersonWrapper()
-    {
-        delete personPtr;
-    }
-
-    JUCE_LEAK_DETECTOR(PersonWrapper)
-};

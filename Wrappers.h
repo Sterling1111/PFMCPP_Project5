@@ -2,11 +2,11 @@
 
 #include "LeakedObjectDetector.h"
 
-#include "Car.h"
-#include "CellPhone.h"
-#include "Screen.h"
-#include "Person.h"
-#include "Monitor.h"
+struct Car;
+struct CellPhone;
+struct Screen;
+struct Person;
+struct Monitor;
 
 struct CarWrapper
 {

@@ -1,4 +1,9 @@
 #include "Wrappers.h"
+#include "Person.h"
+#include "Car.h"
+#include "CellPhone.h"
+#include "Screen.h"
+#include "Monitor.h"
 
 CarWrapper::CarWrapper(Car* ptr) : carPtr{ptr} {}
 CarWrapper::~CarWrapper()
